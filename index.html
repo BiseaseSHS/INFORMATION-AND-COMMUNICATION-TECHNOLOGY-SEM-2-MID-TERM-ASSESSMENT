@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Bisease SeniorHigh School — ICT Mid-Term </title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<!-- Violation Toast -->
+<div id="violationToast" class="toast hidden"></div>
+
+<!-- ============ WELCOME SCREEN ============ -->
+<section id="welcomeScreen" class="screen active">
+  <div class="welcome-wrapper">
+
+    <!-- School Identity Banner -->
+    <div class="school-banner">
+      <div class="school-banner-inner">
+        <img src="0030702-crest.png" alt="Bisease SNR. High School Crest" class="school-logo">
+        <div class="school-name">Bisease Senior High School</div>
+        <div class="school-divider"></div>
+        <div class="school-location">Ajumako-Bisease, Central Region</div>
+      </div>
+    </div>
+
+    <div class="card welcome-card">
+      <h2 class="exam-title">SEM 2 Mid-Term Assessment — Week 6</h2>
+      <p class="muted" style="text-align:center; font-size:13px; margin-top:4px; margin-bottom:16px;">Information &amp; Communication Technology &nbsp;·&nbsp; Computer-Based Test</p>
+
+      <div class="info-grid">
+        <div class="info-pill"><span>⏱</span> 20 Minutes</div>
+        <div class="info-pill"><span>📝</span> 15 Questions</div>
+        <div class="info-pill"><span>🎯</span> 1 Attempt Only</div>
+        <div class="info-pill"><span>🔒</span> Anti-Cheat On</div>
+      </div>
+
+      <form id="studentForm" class="student-form">
+        <label for="studentName">Full Name</label>
+        <input type="text" id="studentName" placeholder="e.g. John Mensah" required autocomplete="off">
+
+        <label for="studentClass">Class</label>
+        <input type="text" id="studentClass" placeholder="e.g. Form 1A" required autocomplete="off">
+
+        <div class="rules-box">
+          <strong>⚠ Before you begin:</strong>
+          <ul>
+            <li>You have <b>20 minutes</b> to complete the test.</li>
+            <li>Switching tabs or leaving the page is monitored. 3 violations = auto-submit.</li>
+            <li>You can only attempt this exam <b>once</b> on this device.</li>
+            <li>Do not refresh or use the back button during the exam.</li>
+          </ul>
+        </div>
+
+        <button type="submit" id="startExamBtn" class="btn btn-primary btn-block">Start Test →</button>
+      </form>
+    </div>
+
+  </div>
+</section>
+
+<!-- ============ ALREADY ATTEMPTED SCREEN ============ -->
+<section id="lockedScreen" class="screen">
+  <div class="card center-card">
+    <div class="icon-circle icon-error">🔒</div>
+    <h2 style="color: #991B1B; margin-bottom: 8px;">Test Already Completed</h2>
+    <p class="muted">You have already completed this test. Multiple attempts are not allowed on this device.</p>
+    <div id="lockedSummary" class="locked-summary"></div>
+  </div>
+</section>
+
+<!-- ============ EXAM SCREEN ============ -->
+<section id="examScreen" class="screen">
+
+  <!-- Sticky Timer / Header -->
+  <header class="exam-header">
+    <div class="exam-header-inner">
+      <div class="student-tag">
+        <div class="avatar" id="avatarInitials">JM</div>
+        <div>
+          <div class="student-name" id="headerName">—</div>
+          <div class="student-class" id="headerClass">—</div>
+        </div>
+      </div>
+
+      <div class="timer-panel" id="timerPanel">
+        <span class="timer-icon">⏱</span>
+        <span id="timerDisplay">20:00</span>
+      </div>
+
+      <div class="violation-indicator" id="violationIndicator">
+        Violations: <span id="violationCount">0</span>/3
+      </div>
+    </div>
+
+    <div class="progress-bar-track">
+      <div class="progress-bar-fill" id="progressBarFill"></div>
+    </div>
+  </header>
+
+  <main class="exam-main">
+    <!-- Question Navigator -->
+    <aside class="question-nav" id="questionNav">
+      <h3>Question Map</h3>
+      <div class="nav-grid" id="navGrid"></div>
+      <div class="nav-legend">
+        <div><span class="dot dot-answered"></span> Answered</div>
+        <div><span class="dot dot-unanswered"></span> Unanswered</div>
+        <div><span class="dot dot-current"></span> Current</div>
+      </div>
+      <button id="submitExamBtn" class="btn btn-success btn-block">Submit Test</button>
+    </aside>
+
+    <!-- Question Card -->
+    <div class="question-area">
+      <div class="paper-label" id="paperLabel">Paper 1 — Objective</div>
+      <div class="card question-card">
+        <div class="question-meta">
+          <span id="questionNumber">Question 1 of 15</span>
+          <span class="marks-tag" id="marksTag">1 mark</span>
+        </div>
+        <h2 class="question-text" id="questionText">Loading question…</h2>
+
+        <div id="optionsContainer" class="options-container"></div>
+        <textarea id="textAnswerInput" class="text-answer hidden" placeholder="Type your answer here…" rows="4"></textarea>
+      </div>
+
+      <div class="nav-buttons">
+        <button id="prevBtn" class="btn btn-ghost">← Previous</button>
+        <span class="mobile-progress" id="mobileProgress">1 / 15</span>
+        <button id="nextBtn" class="btn btn-primary">Next →</button>
+      </div>
+    </div>
+  </main>
+</section>
+
+<!-- ============ CONFIRM SUBMIT MODAL ============ -->
+<div id="confirmModal" class="modal-overlay hidden">
+  <div class="modal-box">
+    <h3>Submit Test?</h3>
+    <p id="unansweredWarning" class="muted"></p>
+    <p>Once submitted, you cannot make further changes. Your result will be recorded immediately.</p>
+    <div class="modal-actions">
+      <button id="cancelSubmitBtn" class="btn btn-ghost">Continue Test</button>
+      <button id="confirmSubmitBtn" class="btn btn-primary">Yes, Submit</button>
+    </div>
+  </div>
+</div>
+
+<!-- ============ SUBMITTING / LOADING SCREEN ============ -->
+<section id="submittingScreen" class="screen">
+  <div class="card center-card">
+    <div class="spinner"></div>
+    <h2 style="color: var(--royal-dark);">Submitting Test…</h2>
+    <p class="muted" id="submittingStatus" style="margin-top: 8px;">Calculating your results, please wait.</p>
+  </div>
+</section>
+
+<!-- ============ RESULT SCREEN ============ -->
+<section id="resultScreen" class="screen">
+  <div class="result-wrapper">
+
+    <!-- School Banner on result too -->
+    <div class="school-banner" style="padding: 14px 20px 12px;">
+      <div class="school-banner-inner" style="flex-direction: row; justify-content: center; gap: 14px;">
+        <img src="logo.png" alt="School Crest" class="school-logo" style="width:52px;height:52px;">
+        <div style="text-align:left;">
+          <div class="school-name" style="font-size:14px;">Bisease Senior High School</div>
+          <div class="school-location" style="font-size:10px;">ICT Mid-Term · Sem 2 Week 6</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card result-card">
+      <div class="result-header">
+        <div class="icon-circle icon-success" id="resultIcon">✓</div>
+        <h2>Test Submitted</h2>
+        <p class="muted">Well done, <strong id="resultName">—</strong>! Here's your result.</p>
+      </div>
+
+      <div class="grade-display" id="gradeDisplay">A</div>
+      <div class="score-percent" id="scorePercent">0%</div>
+
+      <div class="result-grid">
+        <div class="result-stat">
+          <div class="result-stat-value" id="statTotal">0</div>
+          <div class="result-stat-label">Total Questions</div>
+        </div>
+        <div class="result-stat stat-success">
+          <div class="result-stat-value" id="statCorrect">0</div>
+          <div class="result-stat-label">Correct</div>
+        </div>
+        <div class="result-stat stat-error">
+          <div class="result-stat-value" id="statWrong">0</div>
+          <div class="result-stat-label">Wrong</div>
+        </div>
+        <div class="result-stat">
+          <div class="result-stat-value" id="statTime">0 min</div>
+          <div class="result-stat-label">Time Used</div>
+        </div>
+      </div>
+
+      <div id="sheetStatus" class="sheet-status"></div>
+      <p class="muted small-print">This Test has been recorded. Closing this page will not allow a retake on this device.</p>
+    </div>
+
+  </div>
+</section>
+
+<script src="questions.js"></script>
+<script src="script.js"></script>
+</body>
+</html>
