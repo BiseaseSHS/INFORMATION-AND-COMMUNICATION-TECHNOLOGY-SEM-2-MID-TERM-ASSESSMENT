@@ -416,30 +416,37 @@
   });
 
   // ====== MARKING ======
-  function markExam() {
-    let correct = 0;
-    const total = questions.length;
+ function markExam() {
+  let totalMarksEarned = 0;
+  let totalMarksPossible = 0;
 
-    questions.forEach((q) => {
-      const given = answers[q.id];
-      if (q.type === "mcq") {
-        if (given !== undefined && q.options[given] && q.options[given].isCorrect) correct++;
-      } else {
-        if (typeof given === "string" && given.trim() !== "") {
-          const normalized = given.toLowerCase();
-          const matched = q.acceptableAnswers.filter((term) => normalized.includes(term));
-          const uniqueMatches = new Set(matched);
-          if (uniqueMatches.size >= (q.requiredCount || 1)) correct++;
-        }
+  questions.forEach((q) => {
+    const given = answers[q.id];
+    const qMarks = q.marks || 1;
+    totalMarksPossible += qMarks;
+
+    if (q.type === "mcq") {
+      if (given !== undefined && q.options[given] && q.options[given].isCorrect)
+        totalMarksEarned += qMarks;
+    } else {
+      if (typeof given === "string" && given.trim() !== "") {
+        const normalized = given.toLowerCase();
+        const matched = q.acceptableAnswers.filter((term) =>
+          normalized.includes(term)
+        );
+        const uniqueMatches = new Set(matched);
+        if (uniqueMatches.size >= (q.requiredCount || 1))
+          totalMarksEarned += qMarks;
       }
-    });
+    }
+  });
 
-    const wrong = total - correct;
-    const percentage = Math.round((correct / total) * 100);
-    const grade = computeGrade(percentage);
+  const wrong = totalMarksPossible - totalMarksEarned;
+  const percentage = Math.round((totalMarksEarned / totalMarksPossible) * 100);
+  const grade = computeGrade(percentage);
 
-    return { total, correct, wrong, percentage, grade };
-  }
+  return { total: totalMarksPossible, correct: totalMarksEarned, wrong, percentage, grade };
+}
 
   function computeGrade(pct) {
     if (pct >= 80) return "A";
