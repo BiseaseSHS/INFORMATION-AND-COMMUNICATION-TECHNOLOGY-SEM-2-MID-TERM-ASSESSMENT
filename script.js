@@ -416,37 +416,44 @@
   });
 
   // ====== MARKING ======
- function markExam() {
-  let totalMarksEarned = 0;
-  let totalMarksPossible = 0;
+  // Each question's `marks` field determines how much it's worth.
+  // - Paper 1 (mcq) questions: 1 mark each, full credit if the selected
+  //   option's isCorrect flag is true, 0 otherwise.
+  // - Paper 2 (text) questions: 2 marks each, awarded in full (no partial
+  //   credit) if the answer hits at least `requiredCount` distinct
+  //   acceptable keywords.
+  // Total across 10 Paper 1 + 5 Paper 2 questions = 10x1 + 5x2 = 20 marks.
+  function markExam() {
+    let totalMarksEarned = 0;
+    let totalMarksPossible = 0;
 
-  questions.forEach((q) => {
-    const given = answers[q.id];
-    const qMarks = q.marks || 1;
-    totalMarksPossible += qMarks;
+    questions.forEach((q) => {
+      const given = answers[q.id];
+      const qMarks = q.marks || 1;
+      totalMarksPossible += qMarks;
 
-    if (q.type === "mcq") {
-      if (given !== undefined && q.options[given] && q.options[given].isCorrect)
-        totalMarksEarned += qMarks;
-    } else {
-      if (typeof given === "string" && given.trim() !== "") {
-        const normalized = given.toLowerCase();
-        const matched = q.acceptableAnswers.filter((term) =>
-          normalized.includes(term)
-        );
-        const uniqueMatches = new Set(matched);
-        if (uniqueMatches.size >= (q.requiredCount || 1))
+      if (q.type === "mcq") {
+        if (given !== undefined && q.options[given] && q.options[given].isCorrect)
           totalMarksEarned += qMarks;
+      } else {
+        if (typeof given === "string" && given.trim() !== "") {
+          const normalized = given.toLowerCase();
+          const matched = q.acceptableAnswers.filter((term) =>
+            normalized.includes(term)
+          );
+          const uniqueMatches = new Set(matched);
+          if (uniqueMatches.size >= (q.requiredCount || 1))
+            totalMarksEarned += qMarks;
+        }
       }
-    }
-  });
+    });
 
-  const wrong = totalMarksPossible - totalMarksEarned;
-  const percentage = Math.round((totalMarksEarned / totalMarksPossible) * 100);
-  const grade = computeGrade(percentage);
+    const wrong = totalMarksPossible - totalMarksEarned;
+    const percentage = Math.round((totalMarksEarned / totalMarksPossible) * 100);
+    const grade = computeGrade(percentage);
 
-  return { total: totalMarksPossible, correct: totalMarksEarned, wrong, percentage, grade };
-}
+    return { total: totalMarksPossible, correct: totalMarksEarned, wrong, percentage, grade };
+  }
 
   function computeGrade(pct) {
     if (pct >= 80) return "A";
