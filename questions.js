@@ -2,6 +2,13 @@
 // Question bank for BISEASE SENIOR HIGH SCHOOL - ICT SEM 2 MID-TERM ASSESSMENT
 // type: "mcq" -> multiple choice (auto-marked exact match)
 // type: "text" -> short answer (auto-marked via keyword matching against acceptable answers)
+//
+// Marking scheme: 15 questions, 20 marks total
+//   - Paper 1 (Objective, 10 questions): 1 mark each  -> 10 marks
+//   - Paper 2 (Essay, 5 questions): 2 marks each       -> 10 marks
+//   - A Paper 2 question is all-or-nothing: if the student's answer hits the
+//     required number of acceptable keywords, they get the FULL 2 marks for
+//     that question (no partial credit).
 
 const QUESTION_BANK = [
   // ----- PAPER 2 - ESSAY (text type, keyword-matched) -----
